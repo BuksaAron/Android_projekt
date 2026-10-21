@@ -26,7 +26,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: dbname
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -42,7 +42,7 @@ services:
     # image: redis/redis-stack:latest
     restart: always
     ports:
-      - '6379:6379' # csak akkor kell, ha hostról is akarsz csatlakozni
+      - '6380:6379' # csak akkor kell, ha hostról is akarsz csatlakozni
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
