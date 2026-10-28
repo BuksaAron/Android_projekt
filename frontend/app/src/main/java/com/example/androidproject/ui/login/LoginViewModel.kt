@@ -1,4 +1,4 @@
-package com.example.androidproject.ui.login
+package com.example.androidproject
 
 import android.app.Application
 import android.util.Patterns
@@ -22,6 +22,7 @@ data class LoginUiState(
 )
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
+
     private val repository = AuthRepository()
     private val sessionManager = SessionManager.getInstance(application)
 
@@ -39,11 +40,13 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun login() {
         val state = _uiState.value
         val email = state.email.trim()
+
         validate(email, state.password)?.let { message ->
             _uiState.update { it.copy(error = message) }
             return
         }
         if (state.isLoading) return
+
         _uiState.update { it.copy(isLoading = true, error = null) }
 
         viewModelScope.launch {

@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.example.androidproject.network.RetrofitClient
 import com.example.androidproject.ui.theme.AndroidProjectTheme
 import com.example.progr3ssapp.ui.navigation.AppNavGraph
 import kotlinx.coroutines.delay
@@ -34,9 +35,10 @@ class MainActivity : ComponentActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-
+        RetrofitClient.init(applicationContext)
+        val splashScreen = installSplashScreen()
+       
         requestLocalNetworkPermissionIfNeeded()
 
         var isLoading = true
