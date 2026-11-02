@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 @Serializable object Home
 @Serializable object MainGraph
 
+@Serializable object AddHabit
+@Serializable object CreateSchedule
+
 @Serializable
 data class Profile(
     val userId: String = "guest",

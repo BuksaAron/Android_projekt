@@ -23,6 +23,8 @@ import com.example.androidproject.HomeScreen
 import com.example.androidproject.LoginScreen
 import com.example.androidproject.ProfileScreen
 import com.example.androidproject.RegisterScreen
+import com.example.androidproject.ui.habit.AddHabitScreen
+import com.example.androidproject.ui.schedule.CreateScheduleScreen
 import com.example.androidproject.utils.SessionManager
 
 sealed class Screen(val route: String, val title: String) {
@@ -30,8 +32,9 @@ sealed class Screen(val route: String, val title: String) {
     object Home : Screen("home", "Home")
     object Profile : Screen("profile", "Profile")
     object Register : Screen("register", "Register")
+    object AddHabit : Screen("add_habit", "Add habit")
+    object CreateSchedule : Screen("create_schedule", "New schedule")
 }
-
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
@@ -117,6 +120,12 @@ fun AppNavGraph() {
                     onViewProfileClick = {
                         navController.navigate(Screen.Profile.route)
                     },
+                    onAddHabit = { navController.navigate(Screen.AddHabit.route) },
+                    onCreateSchedule = { navController.navigate(Screen.CreateSchedule.route) }
+                )
+            }
+            composable(Screen.Profile.route) {
+                ProfileScreen(
                     onLogout = {
                         navController.navigate(Screen.Login.route) {
                             popUpTo(0) { inclusive = true }
@@ -125,8 +134,35 @@ fun AppNavGraph() {
                     }
                 )
             }
-            composable(Screen.Profile.route) {
-                ProfileScreen()
+            composable(Screen.AddHabit.route) {
+                AddHabitScreen(
+                    onBack = { navController.popBackStack() },
+                    onSaved = {
+                        navController.navigate(Screen.Home.route) {
+
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToCreateSchedule = {
+                        navController.navigate(Screen.CreateSchedule.route)
+                    }
+                )
+            }
+
+            composable(Screen.CreateSchedule.route) {
+                CreateScheduleScreen(
+                    onBack = { navController.popBackStack() },
+                    onSaved = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
+                    onNavigateToAddHabit = {
+                        navController.navigate(Screen.AddHabit.route)
+                    }
+                )
             }
         }
     }

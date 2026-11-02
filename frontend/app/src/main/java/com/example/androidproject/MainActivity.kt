@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         RetrofitClient.init(applicationContext)
         val splashScreen = installSplashScreen()
-       
+
         requestLocalNetworkPermissionIfNeeded()
 
         var isLoading = true
