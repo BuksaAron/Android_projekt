@@ -21,9 +21,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.androidproject.HomeScreen
 import com.example.androidproject.LoginScreen
-import com.example.androidproject.ProfileScreen
 import com.example.androidproject.RegisterScreen
 import com.example.androidproject.ui.habit.AddHabitScreen
+import com.example.androidproject.ui.profile.ProfileScreen
 import com.example.androidproject.ui.schedule.CreateScheduleScreen
 import com.example.androidproject.utils.SessionManager
 
@@ -117,9 +117,6 @@ fun AppNavGraph() {
             }
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onViewProfileClick = {
-                        navController.navigate(Screen.Profile.route)
-                    },
                     onAddHabit = { navController.navigate(Screen.AddHabit.route) },
                     onCreateSchedule = { navController.navigate(Screen.CreateSchedule.route) }
                 )
