@@ -9,6 +9,11 @@ internal fun <T> Response<T>.bodyOrThrow(fallbackMessage: String): T {
     }
     error(parseErrorMessage(this, fallbackMessage))
 }
+internal fun Response<*>.unitOrThrow(fallbackMessage: String) {
+    if (!isSuccessful) {
+        error(parseErrorMessage(this, fallbackMessage))
+    }
+}
 
 private fun parseErrorMessage(response: Response<*>, fallbackMessage: String): String {
     val raw = response.errorBody()?.string()

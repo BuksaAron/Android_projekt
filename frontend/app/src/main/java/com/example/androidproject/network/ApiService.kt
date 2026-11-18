@@ -6,10 +6,14 @@ import com.example.androidproject.network.models.CreateRecurringScheduleRequest
 import com.example.androidproject.network.models.HabitCategory
 import com.example.androidproject.network.models.HabitResponse
 import com.example.androidproject.network.models.ScheduleResponse
+import com.example.androidproject.network.models.UpdateScheduleRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -35,4 +39,16 @@ interface ApiService {
     suspend fun createCustomSchedule(
         @Body body: CreateCustomScheduleRequest
     ): Response<ScheduleResponse>
+
+    @GET("schedule/{id}")
+    suspend fun getScheduleById(@Path("id") id: Long): Response<ScheduleResponse>
+
+    @PATCH("schedule/{id}")
+    suspend fun updateSchedule(
+        @Path("id") id: Long,
+        @Body body: UpdateScheduleRequest
+    ): Response<ScheduleResponse>
+
+    @DELETE("schedule/{id}")
+    suspend fun deleteSchedule(@Path("id") id: Long): Response<Unit>
 }

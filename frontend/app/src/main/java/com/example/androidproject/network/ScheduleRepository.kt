@@ -3,12 +3,26 @@ package com.example.androidproject.network
 import com.example.androidproject.network.models.CreateCustomScheduleRequest
 import com.example.androidproject.network.models.CreateRecurringScheduleRequest
 import com.example.androidproject.network.models.ScheduleResponse
+import com.example.androidproject.network.models.UpdateScheduleRequest
 
 class ScheduleRepository(
     private val api: ApiService = RetrofitClient.apiService
 ) {
     suspend fun getScheduleByDay(day: String): Result<List<ScheduleResponse>> = runCatching {
         api.getScheduleByDay(day).bodyOrThrow("Failed to load schedules")
+    }
+
+    suspend fun getScheduleById(id: Long): Result<ScheduleResponse> = runCatching {
+        api.getScheduleById(id).bodyOrThrow("Failed to load schedule")
+    }
+
+    suspend fun updateSchedule(id: Long, request: UpdateScheduleRequest): Result<ScheduleResponse> =
+        runCatching {
+            api.updateSchedule(id, request).bodyOrThrow("Failed to update schedule")
+        }
+
+    suspend fun deleteSchedule(id: Long): Result<Unit> = runCatching {
+        api.deleteSchedule(id).unitOrThrow("Failed to delete schedule")
     }
 
     suspend fun createRecurringSchedule(

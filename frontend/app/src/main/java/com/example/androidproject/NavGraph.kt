@@ -15,16 +15,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.androidproject.HomeScreen
 import com.example.androidproject.LoginScreen
 import com.example.androidproject.RegisterScreen
 import com.example.androidproject.ui.habit.AddHabitScreen
 import com.example.androidproject.ui.profile.ProfileScreen
 import com.example.androidproject.ui.schedule.CreateScheduleScreen
+import com.example.androidproject.ui.schedule.EditScheduleScreen
+import com.example.androidproject.ui.schedule.ScheduleDetailsScreen
 import com.example.androidproject.utils.SessionManager
 
 sealed class Screen(val route: String, val title: String) {
@@ -34,6 +38,16 @@ sealed class Screen(val route: String, val title: String) {
     object Register : Screen("register", "Register")
     object AddHabit : Screen("add_habit", "Add habit")
     object CreateSchedule : Screen("create_schedule", "New schedule")
+
+    object ScheduleDetails : Screen("schedule_details/{scheduleId}", "Schedule details") {
+        const val ARG_ID = "scheduleId"
+        fun createRoute(id: Long) = "schedule_details/$id"
+    }
+
+    object EditSchedule : Screen("edit_schedule/{scheduleId}", "Edit schedule") {
+        const val ARG_ID = "scheduleId"
+        fun createRoute(id: Long) = "edit_schedule/$id"
+    }
 }
 @Composable
 fun AppNavGraph() {
@@ -118,7 +132,10 @@ fun AppNavGraph() {
             composable(Screen.Home.route) {
                 HomeScreen(
                     onAddHabit = { navController.navigate(Screen.AddHabit.route) },
-                    onCreateSchedule = { navController.navigate(Screen.CreateSchedule.route) }
+                    onCreateSchedule = { navController.navigate(Screen.CreateSchedule.route) },
+                    onScheduleClick = { id ->
+                        navController.navigate(Screen.ScheduleDetails.createRoute(id))
+                    }
                 )
             }
             composable(Screen.Profile.route) {
@@ -159,6 +176,33 @@ fun AppNavGraph() {
                     onNavigateToAddHabit = {
                         navController.navigate(Screen.AddHabit.route)
                     }
+                )
+            }
+
+            composable(
+                route = Screen.ScheduleDetails.route,
+                arguments = listOf(navArgument(Screen.ScheduleDetails.ARG_ID) { type = NavType.LongType })
+            ) { entry ->
+                val scheduleId = entry.arguments?.getLong(Screen.ScheduleDetails.ARG_ID)
+                    ?: return@composable
+                ScheduleDetailsScreen(
+                    scheduleId = scheduleId,
+                    onBack = { navController.popBackStack() },
+                    onEdit = { id -> navController.navigate(Screen.EditSchedule.createRoute(id)) },
+                    onDeleted = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = Screen.EditSchedule.route,
+                arguments = listOf(navArgument(Screen.EditSchedule.ARG_ID) { type = NavType.LongType })
+            ) { entry ->
+                val scheduleId = entry.arguments?.getLong(Screen.EditSchedule.ARG_ID)
+                    ?: return@composable
+                EditScheduleScreen(
+                    scheduleId = scheduleId,
+                    onBack = { navController.popBackStack() },
+                    onSaved = { navController.popBackStack() }
                 )
             }
         }

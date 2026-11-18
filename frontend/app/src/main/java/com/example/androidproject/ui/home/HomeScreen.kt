@@ -1,6 +1,8 @@
 package com.example.androidproject
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +42,7 @@ import com.example.androidproject.utils.HomeViewModel
 fun HomeScreen(
     onAddHabit: () -> Unit,
     onCreateSchedule: () -> Unit,
+    onScheduleClick: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -113,7 +117,13 @@ fun HomeScreen(
         if (uiState.schedules.isEmpty() && !uiState.isLoading) {
             item { EmptyHint("Nothing scheduled today", "Tap “New schedule” to plan something.") }
         } else {
-            items(uiState.schedules, key = { it.id }) { ScheduleCard(it) }
+            items(uiState.schedules, key = { it.id }) { schedule ->
+                Box(
+                    Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable { onScheduleClick(schedule.id) }
+                ) { ScheduleCard(schedule) }
+            }
         }
 
         item { SectionHeader("Your habits", uiState.habits.size) }
