@@ -25,6 +25,13 @@ class SessionManager private constructor(context: Context) {
     fun clearSession() {
         prefs.edit().clear().apply()
     }
+
+    fun updateTokens(accessToken: String, refreshToken: String) {
+        prefs.edit().apply {
+            putString(KEY_ACCESS_TOKEN, accessToken)
+            putString(KEY_REFRESH_TOKEN, refreshToken)
+        }.apply()
+    }
     val accessToken: String? get() = prefs.getString(KEY_ACCESS_TOKEN, null)
     val refreshToken: String? get() = prefs.getString(KEY_REFRESH_TOKEN, null)
     val userId: Long get() = prefs.getLong(KEY_USER_ID, NO_USER)

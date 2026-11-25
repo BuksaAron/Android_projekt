@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToResetPassword: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = viewModel()
 ) {
@@ -97,6 +98,10 @@ fun LoginScreen(
             } else {
                 Text("Log in")
             }
+        }
+
+        TextButton(onClick = onNavigateToResetPassword) {
+            Text("Forgot password?")
         }
 
         TextButton(onClick = onNavigateToRegister) {

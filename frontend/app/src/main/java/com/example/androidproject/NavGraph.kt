@@ -11,9 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,18 +22,22 @@ import androidx.navigation.navArgument
 import com.example.androidproject.HomeScreen
 import com.example.androidproject.LoginScreen
 import com.example.androidproject.RegisterScreen
+import com.example.androidproject.ResetPasswordScreen
+import com.example.androidproject.SplashScreen
 import com.example.androidproject.ui.habit.AddHabitScreen
 import com.example.androidproject.ui.profile.ProfileScreen
 import com.example.androidproject.ui.schedule.CreateScheduleScreen
 import com.example.androidproject.ui.schedule.EditScheduleScreen
 import com.example.androidproject.ui.schedule.ScheduleDetailsScreen
-import com.example.androidproject.utils.SessionManager
+
 
 sealed class Screen(val route: String, val title: String) {
+    object Splash : Screen("splash", "Splash")
     object Login : Screen("login", "Login")
     object Home : Screen("home", "Home")
     object Profile : Screen("profile", "Profile")
     object Register : Screen("register", "Register")
+    object ResetPassword : Screen("reset_password", "Reset password")
     object AddHabit : Screen("add_habit", "Add habit")
     object CreateSchedule : Screen("create_schedule", "New schedule")
 
@@ -49,18 +51,12 @@ sealed class Screen(val route: String, val title: String) {
         fun createRoute(id: Long) = "edit_schedule/$id"
     }
 }
+
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
-    val context = LocalContext.current
-    val sessionManager = remember { SessionManager.getInstance(context) }
-
-    val startDestination = remember {
-        if (sessionManager.isLoggedIn) Screen.Home.route else Screen.Login.route
-    }
 
     val showBottomBar = currentRoute == Screen.Home.route || currentRoute == Screen.Profile.route
 
@@ -102,9 +98,23 @@ fun AppNavGraph() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = startDestination,
+            startDestination = Screen.Splash.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(Screen.Splash.route) {
+                SplashScreen(
+                    onNavigateToHome = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
+                    },
+                    onNavigateToLogin = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable(Screen.Login.route) {
                 LoginScreen(
                     onLoginSuccess = {
@@ -114,6 +124,9 @@ fun AppNavGraph() {
                     },
                     onNavigateToRegister = {
                         navController.navigate(Screen.Register.route)
+                    },
+                    onNavigateToResetPassword = {
+                        navController.navigate(Screen.ResetPassword.route)
                     }
                 )
             }
@@ -124,6 +137,13 @@ fun AppNavGraph() {
                             popUpTo(0) { inclusive = true }
                         }
                     },
+                    onNavigateToLogin = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(Screen.ResetPassword.route) {
+                ResetPasswordScreen(
                     onNavigateToLogin = {
                         navController.popBackStack()
                     }
@@ -153,7 +173,6 @@ fun AppNavGraph() {
                     onBack = { navController.popBackStack() },
                     onSaved = {
                         navController.navigate(Screen.Home.route) {
-
                             popUpTo(Screen.Home.route) { inclusive = true }
                             launchSingleTop = true
                         }

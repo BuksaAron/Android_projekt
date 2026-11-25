@@ -3,6 +3,8 @@ package com.example.androidproject.network
 import com.example.androidproject.network.models.ApiError
 import com.example.androidproject.network.models.LoginRequest
 import com.example.androidproject.network.models.LoginResponse
+import com.example.androidproject.network.models.ResetPasswordRequest
+import com.example.androidproject.network.models.TokensDto
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -40,6 +42,14 @@ class AuthRepository(
             profileImage = imagePart
         )
         response.requireBody("Registration failed")
+    }
+
+    suspend fun resetPassword(email: String): Result<Unit> = runCatching {
+        api.resetPasswordViaEmail(ResetPasswordRequest(email)).unitOrThrow("Password reset failed")
+    }
+
+    suspend fun refresh(refreshToken: String): Result<TokensDto> = runCatching {
+        api.refresh("Bearer $refreshToken").bodyOrThrow("Session expired")
     }
 
     private fun Response<LoginResponse>.requireBody(fallbackMessage: String): LoginResponse {

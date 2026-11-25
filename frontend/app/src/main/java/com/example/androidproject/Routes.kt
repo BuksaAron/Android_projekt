@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable object AddHabit
 @Serializable object CreateSchedule
-
+@Serializable object Splash
+@Serializable object ResetPassword
 @Serializable
 data class Profile(
     val userId: String = "guest",
